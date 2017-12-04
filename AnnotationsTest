@@ -1,0 +1,48 @@
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.testng.annotations.*;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by Надія on 30.11.2017.
+ */
+@Listeners(Listener.class)
+
+public class AnnotationsTest {
+
+    protected WebDriver driver;
+
+    @Parameters("browser")
+    @BeforeClass
+        protected WebDriver getDriver(String browser) {
+            if(browser.equals("chrome")) {
+                //System.setProperty("webdriver.chrome.driver", "/home/user/drivers/chromedriver");
+                System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/drivers/chromedriver.exe");
+                driver = new ChromeDriver();
+            }
+            else if(browser.equals("firefox")) {
+                //System.setProperty("webdriver.gecko.driver", "/home/user/drivers/geckodriver");
+                System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "/drivers/geckodriver.exe");
+                driver = new FirefoxDriver();
+            }
+            driver.manage().window().maximize();
+            driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+            return driver;
+        }
+
+    @AfterClass
+        protected void tearDown() {
+        if (driver != null)
+            driver.quit();
+        }
+
+    @Test
+    public void ProductCreationTest() {System.out.println("ProductCreationTest execution");}
+
+    @Test(dependsOnMethods = "ProductCreationTest")
+    public void AssertProductCreationTest() {System.out.println("AssertProductCreationTest execution");}
+}
